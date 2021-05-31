@@ -142,6 +142,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Poetry
+poetry.lock
+
 *.egg-info
 .coverage
 .ipynb_checkpoints
