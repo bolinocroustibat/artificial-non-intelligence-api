@@ -1,1 +1,2 @@
-# artificial-non-intelligence
+# Artificial Non Intelligence
+
