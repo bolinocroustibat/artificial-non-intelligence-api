@@ -7,6 +7,12 @@ authors = ["Adrien Carpentier <moi@adriencarpentier.com>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 packgenlite = {git = "https://github.com/krokrob/packgenlite.git"}
+peewee = "^3.14.4"
+beautifulsoup4 = "^4.9.3"
+typer = "^0.3.2"
+requests = "^2.25.1"
+selenium = "^3.141.0"
+chromedriver-binary = "^91.0.4472"
 
 [tool.poetry.dev-dependencies]
 
