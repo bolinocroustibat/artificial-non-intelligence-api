@@ -151,4 +151,5 @@ poetry.lock
 .DS_Store
 raw_data/
 **/__pycache__/
+__pycache__/
 .env
