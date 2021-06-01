@@ -9,6 +9,7 @@ class BaseModel(Model):
     class Meta:
         database = db
 
+
 class Website(BaseModel):
     name = CharField(max_length=40)
     short_name = CharField(max_length=20, unique=True)

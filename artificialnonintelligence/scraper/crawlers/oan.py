@@ -61,6 +61,12 @@ class OANCrawler(CommentsCrawler):
                 self.debug("Couldn't scroll to the comments section, closing.")
                 driver.close()
             else:
-                self.debug("Found Disqus section. Get comments...")
+                
                 wait = WebDriverWait(driver, delay)
-                element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".post-message"))) # Wait until the element appears
+                element = wait.until(EC.presence_of_element_located((By.ID, "conversation"))) # Wait until the element appears
+                self.debug(element)
+                
+                
+                self.debug("Found Disqus section. Getting comments...")
+                # wait = WebDriverWait(driver, delay)
+                # element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, ".post-message"))) # Wait until the element appears
