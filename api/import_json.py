@@ -1,9 +1,5 @@
-import asyncio
 import json
 import sqlite3
-
-
-from models import Comment
 
 
 def load_json_into_db(filename: str, realness: int) -> None:
