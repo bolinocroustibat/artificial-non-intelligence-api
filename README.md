@@ -6,6 +6,22 @@
 - As a CSV file, from Kaggle, located in /artificial-non-intelligence/data.
 
 
+## API
+
+To launch the API locally:
+
+`uvicorn api.main:app --reload`
+
+
+## To deploy on Heroku
+
+Add Heroku app as origin, if necessary:
+`heroku git:remote -a non-intelligence-api`
+
+Deploy with:
+`git push heroku main`
+
+
 ## Comments crawlers
 
 Located in /artificial-non-intelligence/data-crawler.
@@ -21,24 +37,3 @@ for example, for the crawler "Le Figaro":
 ```sh
 python3 ./artificial-non-intelligence/data-crawler/crawl.py figaro
 ```
-
-
-## API
-
-TO DO
-
-
-
-## Frontend
-
-Located in `/frontend` for now.
-Basic frontend with HTML, CSS and JavaScript, no dependencies.
-
-
-## To deploy on Heroku
-
-Add Heroku app as origin, if necessary:
-`heroku git:remote -a artificial-non-intelligence`
-
-Deploy with:
-`git push heroku main`
