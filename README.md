@@ -28,6 +28,17 @@ python3 ./artificial-non-intelligence/data-crawler/crawl.py figaro
 TO DO
 
 
+
 ## Frontend
 
-TO DO
+Located in `/frontend` for now.
+Basic frontend with HTML, CSS and JavaScript, no dependencies.
+
+
+## To deploy on Heroku
+
+Add Heroku app as origin, if necessary:
+`heroku git:remote -a artificial-non-intelligence`
+
+Deploy with:
+`git push heroku master`
