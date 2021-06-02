@@ -2,7 +2,7 @@
 name = "artificial-non-intelligence"
 version = "0.1.0"
 description = ""
-authors = ["Adrien Carpentier <moi@adriencarpentier.com>", "Phil Lin <philip.lin@gmail.com, "Dilnoza Mirdjalilova <dmirdjalilova@gmail.com>"]
+authors = []
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -22,7 +22,10 @@ pandas = "^1.2.4"
 pytest = "^6.2.4"
 coverage = "^5.5"
 memoized-property = "^1.0.3"
-gunicorn = "^20.1.0"
+fastapi = "^0.65.1"
+ormar = "^0.10.9"
+uvicorn = "^0.14.0"
+aiosqlite = "^0.17.0"
 
 [tool.poetry.dev-dependencies]
 
