@@ -39,12 +39,12 @@ async def get_random_comment():
         return {
             'id': id, 
             'comment': comment.content,
-            # 'realness': comment.realness, # maybe no need to send, to avoid chackers cheating :)
+            # 'realness': comment.realness, # maybe no need to send, to avoid hackers cheating :)
             'difficulty': comment.difficulty
             } 
 
 
-@app.get('verify-answer')
+@app.get('/verify-answer')
 async def verify_answer(questionId: int, answer: int):
     """
     Endpoint which receives the answer from the user from the frontend, compares to the fake flag of the comment in the DB, and answers if it was a good or bad answer.
