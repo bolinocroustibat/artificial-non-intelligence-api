@@ -35,26 +35,19 @@ async def shutdown() -> None:
         await database_.disconnect()
 
 #Defining ORMAR models
-class Category(ormar.Model):
+
+#Create 1 class / table
+
+class Comments(ormar.Model):
     class Meta:
-        tablename = "categories"
+        tablename = "real_comments" 
         metadata = metadata
         database = database
-
+        
     id: int = ormar.Integer(primary_key=True)
-    name: str = ormar.String(max_length=100)
-
-
-class Item(ormar.Model):
-    class Meta:
-        tablename = "items"
-        metadata = metadata
-        database = database
-
-    id: int = ormar.Integer(primary_key=True)
-    name: str = ormar.String(max_length=100)
-    category: Optional[Category] = ormar.ForeignKey(Category, nullable=True)
-
+    content: str = ormar.String(max_length=1000)  #char length
+    realness: bool = ormar.Boolean  #double check
+    #difficulty: int = ormar.Integer(primary_key=False)
 
 
 # Description: endpoint which take a random comment from the database (human-generated or AI-generated), 
@@ -62,6 +55,9 @@ class Item(ormar.Model):
 @app.get('/get-random-comment')
 
 def get-random-comment():
+        ##code how to get random comment from database
+        
+    
         return {
         'id': 'database_id_of_the_comment', 
         'comment': 'text_content_of_the_comment'
@@ -73,12 +69,13 @@ def get-random-comment():
 # fake flag of the comment in the DB, and answers if it was a good or bad answer.
 @app.get('verify-answer')
 
-user_input = {
-        'id': 'database_id_of_the_comment',
-        'user_answer': 0 or 1
-        }
 
-def verify-answer(user_input):
+
+def verify-answer(id, user_answer):
+    
+    # code : request database with id and then compare realness compare with user answer
+    # send back to frontend the correct/incorrect verification
+    
     return {
         'id': 'database_id_of_the_comment',
         'user_answer': 0 or 1
