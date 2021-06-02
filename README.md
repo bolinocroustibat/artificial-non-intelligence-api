@@ -12,6 +12,10 @@ To launch the API locally:
 
 `uvicorn api.main:app --reload`
 
+To import a JSON file into the SQLite database:
+
+`python api/import_json.py`
+
 
 ## To deploy on Heroku
 
