@@ -17,7 +17,7 @@ def load_json_into_db(filename: str, realness: int) -> None:
                     connection.commit()
                 except Exception as e:
                     print(e)
-                    break
+                    continue
 
 
 filename = "../data/kaggle-cyber-trolls.json"
