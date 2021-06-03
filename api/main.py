@@ -11,12 +11,12 @@ app = FastAPI()
 # For security (avoid another app to connect to this API)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
-    # allow_origins=[
-    #     "http://localhost",
-    #     "http://127.0.0.1",
-    #     "https://artificial-non-intelligence.herokuapp.com"
-    # ],
+    # allow_origins=["*"],  # Allows all origins
+    allow_origins=[
+        "http://localhost",
+        "http://127.0.0.1",
+        "https://artificial-non-intelligence.herokuapp.com"
+    ],
     allow_credentials=True,
     # allow_methods=["*"],  # Allows all methods
     allow_methods=["GET"],  # Allows only GET method
@@ -36,9 +36,9 @@ async def get_random_comment():
 
         # Get a random record with equal chances between real and AI
         if random.choice([True, False]):
-            records = await Comment.objects.filter(realness=1).all()
+            records = await Comment.objects.filter(realness=1).fields("id").all()
         else:
-            records = await Comment.objects.filter(realness=0).all()
+            records = await Comment.objects.filter(realness=0).fields("id").all()
         id = random.choice([r.id for r in records])
 
         comment = await Comment.objects.get(id=id)
