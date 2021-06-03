@@ -11,12 +11,12 @@ app = FastAPI()
 # For security (avoid another app to connect to this API)
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=["*"],  # Allows all origins
-    allow_origins=[
-        "http://localhost",
-        "http://127.0.0.1",
-        "https://artificial-non-intelligence.herokuapp.com"
-    ],
+    allow_origins=["*"],  # Allows all origins (debug, remove for production)
+    # allow_origins=[
+    #     "http://localhost",
+    #     "http://127.0.0.1",
+    #     "https://artificial-non-intelligence.herokuapp.com"
+    # ], (allows only the frontend origin, use that for production)
     allow_credentials=True,
     # allow_methods=["*"],  # Allows all methods
     allow_methods=["GET"],  # Allows only GET method
