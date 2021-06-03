@@ -7,11 +7,14 @@ def load_json_into_db(filename: str, realness: int) -> None:
     with connection:
         with open (filename, "r") as file:
             data: list = json.loads(file.read())
+            print("Excluded since it's too long:")
+            print(data.pop(15312))
             for line in data:
                 try:
+                    aggressive: int = int(line["annotation"]["label"][0])
                     raw_content = line["content"].strip().replace('\"', '”')
                     content: str = '\"' + raw_content + '\"'
-                    query: str = f"""INSERT INTO comments(content,realness) VALUES({content},{realness})"""
+                    query: str = f"""INSERT INTO comments(content,realness,aggressive) VALUES({content},{realness},{aggressive})"""
                     cursor = connection.cursor()
                     cursor.execute(query)
                     connection.commit()
