@@ -23,16 +23,19 @@ def load_real_comments_into_db(filename: str, realness: int) -> None:
                     continue
 
 
-def load_fake_comments_into_db(filename: str, realness: int) -> None:
+def load_fake_comments_into_db(
+    filename: str,
+    realness: int,
+    aggressive:int) -> None:
     connection = sqlite3.connect("../data/db.sqlite3")
     with connection:
         with open (filename, "r") as file:
             data: dict = json.loads(file.read())
-            for line in data["fake content"].values():
+            for line in data["content"].values():
                 try:
                     raw_content = line.strip().replace('\"', '”')
                     content: str = '\"' + raw_content + '\"'
-                    query: str = f"""INSERT INTO comments(content,realness) VALUES({content},{realness})"""
+                    query: str = f"""INSERT INTO comments(content,realness,aggressive) VALUES({content},{realness},{aggressive})"""
                     cursor = connection.cursor()
                     cursor.execute(query)
                     connection.commit()
@@ -42,8 +45,11 @@ def load_fake_comments_into_db(filename: str, realness: int) -> None:
 
 
 if __name__ == "__main__":
-    # filename = "../data/kaggle-cyber-trolls.json"
-    # load_real_comments_into_db(filename=filename, realness=1)
+    filename = "../data/kaggle-cyber-trolls.json"
+    load_real_comments_into_db(filename=filename, realness=1)
 
-    filename = "../data/five_hundred_fake_tweets_1.json"
-    load_fake_comments_into_db(filename=filename, realness=0)
+    # filename = "../data/five_hundred_fake_tweets_aggressive.json"
+    # load_fake_comments_into_db(filename=filename, realness=0, aggressive=1)
+
+    # filename = "../data/five_hundred_fake_tweets_non_aggressive.json"
+    # load_fake_comments_into_db(filename=filename, realness=0, aggressive=0)
