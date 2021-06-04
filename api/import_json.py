@@ -2,7 +2,7 @@ import json
 import sqlite3
 
 
-def load_json_into_db(filename: str, realness: int) -> None:
+def load_real_comments_into_db(filename: str, realness: int) -> None:
     connection = sqlite3.connect("../data/db.sqlite3")
     with connection:
         with open (filename, "r") as file:
@@ -23,6 +23,27 @@ def load_json_into_db(filename: str, realness: int) -> None:
                     continue
 
 
-filename = "../data/kaggle-cyber-trolls.json"
+def load_fake_comments_into_db(filename: str, realness: int) -> None:
+    connection = sqlite3.connect("../data/db.sqlite3")
+    with connection:
+        with open (filename, "r") as file:
+            data: dict = json.loads(file.read())
+            for line in data["fake content"].values():
+                try:
+                    raw_content = line.strip().replace('\"', '”')
+                    content: str = '\"' + raw_content + '\"'
+                    query: str = f"""INSERT INTO comments(content,realness) VALUES({content},{realness})"""
+                    cursor = connection.cursor()
+                    cursor.execute(query)
+                    connection.commit()
+                except Exception as e:
+                    print(e)
+                    continue
 
-load_json_into_db(filename=filename, realness=1)
+
+if __name__ == "__main__":
+    # filename = "../data/kaggle-cyber-trolls.json"
+    # load_real_comments_into_db(filename=filename, realness=1)
+
+    filename = "../data/five_hundred_fake_tweets_1.json"
+    load_fake_comments_into_db(filename=filename, realness=0)
