@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import ormar
 import random
+from typing import Optional
 
 from api.models import Comment
 
@@ -25,7 +26,7 @@ app.add_middleware(
 
 
 @app.get('/get-random-comment')
-async def get_random_comment():
+async def get_random_comment(aggressive: Optional[bool] = None):
         """
         Endpoint which takes a random comment from the database (human-generated or AI-generated), and sends it back along with its ID in the database.
         """
@@ -36,9 +37,17 @@ async def get_random_comment():
 
         # Get a random record with equal chances between real and AI
         if random.choice([True, False]):
-            records = await Comment.objects.filter(realness=1).fields("id").all()
+            records = Comment.objects.filter(realness=1).fields("id")
         else:
-            records = await Comment.objects.filter(realness=0).fields("id").all()
+            records = Comment.objects.filter(realness=0).fields("id")
+        # Add the aggressive filter if it exists
+        try:
+            if aggressive:
+                records = await records.filter(aggressive=1).all()
+            else:
+                records = await records.filter(aggressive=0).all()
+        except:
+            records = await records.all()
         id = random.choice([r.id for r in records])
 
         comment = await Comment.objects.get(id=id)
@@ -48,7 +57,7 @@ async def get_random_comment():
             'comment': comment.content,
             # 'realness': comment.realness, # maybe no need to send, to avoid hackers cheating :)
             'difficulty': comment.difficulty
-            } 
+            }
 
 
 @app.get('/verify-answer')
