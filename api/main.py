@@ -1,10 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import ormar
 import random
+import sqlite3
 from typing import Optional
 
-from api.models import Comment
+from api.models import Answer, Comment
 
 
 app = FastAPI()
@@ -26,7 +27,7 @@ app.add_middleware(
 
 
 @app.get('/get-random-comment')
-async def get_random_comment(aggressive: Optional[bool] = None):
+async def get_random_comment(aggressive: Optional[bool] = None) -> dict:
         """
         Endpoint which takes a random comment from the database (human-generated or AI-generated), and sends it back along with its ID in the database.
         """
@@ -61,15 +62,28 @@ async def get_random_comment(aggressive: Optional[bool] = None):
 
 
 @app.get('/verify-answer')
-async def verify_answer(questionId: int, answer: int):
+async def verify_answer(
+    questionId: int,
+    answerId: int,
+    request: Request
+    ) -> dict:
     """
     Endpoint which receives the answer from the user from the frontend, compares to the fake flag of the comment in the DB, and answers if it was a good or bad answer.
     """
 
-    content = await Comment.objects.get(id=questionId)
-    realness: int = content.realness
-    
-    if answer == realness:
+    comment = await Comment.objects.get(id=questionId)
+
+    try:
+        client_host = request.client.host
+        answer = await Answer.objects.create(
+            answer=answerId,
+            comment=comment,
+            ip=client_host
+        )
+    except Exception as e:
+        print(e)
+
+    if answerId == comment.realness:
         return {
             'id': questionId,
             'correct': 1 # correct answer  
