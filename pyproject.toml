@@ -2,11 +2,10 @@
 name = "artificial-non-intelligence"
 version = "0.1.0"
 description = ""
-authors = []
+authors = ["Adrien Carpentier <moi@adriencarpentier.com>", "Philip Lin <philip.lin@gmail.com>", "Dilnoza Mirdjalilova <dmirdjalilova@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-packgenlite = {git = "https://github.com/krokrob/packgenlite.git"}
 peewee = "^3.14.4"
 beautifulsoup4 = "^4.9.3"
 typer = "^0.3.2"
@@ -14,12 +13,8 @@ requests = "^2.25.1"
 selenium = "^3.141.0"
 chromedriver-binary = "^91.0.4472"
 pandas = "^1.2.4"
-pytest = "^6.2.4"
-coverage = "^5.5"
 fastapi = "^0.65.1"
-ormar = "^0.10.9"
 uvicorn = "^0.14.0"
-aiosqlite = "^0.17.0"
 
 [tool.poetry.dev-dependencies]
 

@@ -1,11 +1,8 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-import ormar
 import random
 import sqlite3
-from typing import Optional
-
-from api.models import Answer, Comment
+from typing import Optional, Tuple
 
 
 app = FastAPI()
@@ -32,32 +29,27 @@ async def get_random_comment(aggressive: Optional[bool] = None) -> dict:
         Endpoint which takes a random comment from the database (human-generated or AI-generated), and sends it back along with its ID in the database.
         """
 
-        # # Get a random record among all of them
-        # num_records = await Comment.objects.count()
-        # id = randint(1, num_records)
+        # Get a random record from DB with equal chances between real and AI
+        connection = sqlite3.connect("data/db.sqlite3")
+        with connection:
 
-        # Get a random record with equal chances between real and AI
-        if random.choice([True, False]):
-            records = Comment.objects.filter(realness=1).fields("id")
-        else:
-            records = Comment.objects.filter(realness=0).fields("id")
-        # Add the aggressive filter if it exists
-        try:
-            if aggressive:
-                records = await records.filter(aggressive=1).all()
+            real: int = random.choice([0, 1])
+
+            if type(aggressive) == bool:
+                aggressive_int = 1 if aggressive else 0
+                query: str = f"SELECT id, content FROM comments WHERE real={real} AND aggressive={aggressive_int} ORDER BY RANDOM() LIMIT 1;"
+    
             else:
-                records = await records.filter(aggressive=0).all()
-        except:
-            records = await records.all()
-        id = random.choice([r.id for r in records])
+                query: str = f"SELECT id, content FROM comments WHERE real={real} ORDER BY RANDOM() LIMIT 1;"
 
-        comment = await Comment.objects.get(id=id)
+            cursor = connection.cursor()
+            cursor.execute(query)
+            comment: Tuple = cursor.fetchone()
+            cursor.close()
 
         return {
-            'id': id, 
-            'comment': comment.content,
-            # 'realness': comment.realness, # maybe no need to send, to avoid hackers cheating :)
-            'difficulty': comment.difficulty
+            'id': comment[0], 
+            'comment': comment[1],
             }
 
 
@@ -71,25 +63,27 @@ async def verify_answer(
     Endpoint which receives the answer from the user from the frontend, compares to the fake flag of the comment in the DB, and answers if it was a good or bad answer.
     """
 
-    comment = await Comment.objects.get(id=questionId)
+    connection = sqlite3.connect("data/db.sqlite3")
+    with connection:
+        query: str = f"SELECT id, real FROM comments WHERE id={questionId};"
+        cursor = connection.cursor()
+        cursor.execute(query)
+        comment: Tuple = cursor.fetchone()
+        try:
+            client_host = request.client.host
+            query: str = f'INSERT INTO answers (answer, comment, ip) VALUES ({answerId}, {comment[0]}, "{client_host}");'
+            cursor = connection.cursor()
+            cursor.execute(query)
+        except Exception as e:
+            print(e)
+        cursor.close()
 
-    try:
-        client_host = request.client.host
-        answer = await Answer.objects.create(
-            answer=answerId,
-            comment=comment,
-            ip=client_host
-        )
-    except Exception as e:
-        print(e)
-
-    if answerId == comment.realness:
+    if answerId == comment[1]:
         return {
             'id': questionId,
             'correct': 1 # correct answer  
             }
-    else:
-        return {
-            'id': questionId,
-            'correct': 0  # 0 = wrong answer
-            }
+    return {
+        'id': questionId,
+        'correct': 0  # 0 = wrong answer
+        }

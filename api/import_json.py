@@ -3,7 +3,7 @@ import re
 import sqlite3
 
 
-def load_real_comments_into_db(filename: str, realness: int = 1) -> None:
+def load_real_comments_into_db(filename: str, real: int = 1) -> None:
     connection = sqlite3.connect("../data/db.sqlite3")
     with connection:
         with open (filename, "r") as file:
@@ -17,7 +17,7 @@ def load_real_comments_into_db(filename: str, realness: int = 1) -> None:
                     content: str = '\"' + raw_content + '\"'
                     pattern = r'((?:#|http)\S+)'
                     if not len(re.findall(pattern, content)) and len(list(content.split(" "))) > 1:
-                        query: str = f"""INSERT INTO comments(content,realness,aggressive) VALUES({content},{realness},{aggressive})"""
+                        query: str = f"""INSERT INTO comments(content,real,aggressive) VALUES({content},{real},{aggressive})"""
                         cursor = connection.cursor()
                         cursor.execute(query)
                         connection.commit()
@@ -29,7 +29,7 @@ def load_real_comments_into_db(filename: str, realness: int = 1) -> None:
 def load_fake_comments_into_db(
     filename: str,
     aggressive: int,
-    realness: int = 0) -> None:
+    real: int = 0) -> None:
     connection = sqlite3.connect("../data/db.sqlite3")
     with connection:
         with open (filename, "r") as file:
@@ -38,7 +38,7 @@ def load_fake_comments_into_db(
                 try:
                     raw_content = line.strip().replace('\"', '”')
                     content: str = '\"' + raw_content + '\"'
-                    query: str = f"""INSERT INTO comments(content,realness,aggressive) VALUES({content},{realness},{aggressive})"""
+                    query: str = f"""INSERT INTO comments(content,real,aggressive) VALUES({content},{real},{aggressive})"""
                     cursor = connection.cursor()
                     cursor.execute(query)
                     connection.commit()
@@ -48,11 +48,11 @@ def load_fake_comments_into_db(
 
 
 if __name__ == "__main__":
-    # filename = "../data/kaggle-cyber-trolls.json"
-    # load_real_comments_into_db(filename=filename, realness=1)
+    filename0 = "../data/kaggle-cyber-trolls.json"
+    load_real_comments_into_db(filename=filename0, real=1)
 
-    # filename = "../data/500_fake_tweets_aggressive_1.json"
-    # load_fake_comments_into_db(filename=filename, aggressive=1, realness=0)
+    filename1 = "../data/500_fake_tweets_aggressive_1.json"
+    load_fake_comments_into_db(filename=filename1, aggressive=1, real=0)
 
-    filename = "../data/500_fake_tweets_nonaggressive_1.json"
-    load_fake_comments_into_db(filename=filename, aggressive=0, realness=0)
+    filename2 = "../data/500_fake_tweets_nonaggressive_1.json"
+    load_fake_comments_into_db(filename=filename2, aggressive=0, real=0)
