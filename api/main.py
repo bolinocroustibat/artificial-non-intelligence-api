@@ -1,8 +1,12 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+import os
+import psycopg2
 import random
-import sqlite3
 from typing import Optional, Tuple
+
+
+DATABASE_URL = os.environ['DATABASE_URL']
 
 
 app = FastAPI()
@@ -30,7 +34,7 @@ async def get_random_comment(aggressive: Optional[bool] = None) -> dict:
         """
 
         # Get a random record from DB with equal chances between real and AI
-        connection = sqlite3.connect("data/db.sqlite3")
+        connection = psycopg2.connect(DATABASE_URL, sslmode='require')
         with connection:
 
             real: int = random.choice([0, 1])
@@ -63,7 +67,7 @@ async def verify_answer(
     Endpoint which receives the answer from the user from the frontend, compares to the fake flag of the comment in the DB, and answers if it was a good or bad answer.
     """
 
-    connection = sqlite3.connect("data/db.sqlite3")
+    connection = psycopg2.connect(DATABASE_URL, sslmode='require')
     with connection:
         query: str = f"SELECT id, real FROM comments WHERE id={questionId};"
         cursor = connection.cursor()
@@ -71,7 +75,7 @@ async def verify_answer(
         comment: Tuple = cursor.fetchone()
         try:
             client_host = request.client.host
-            query: str = f'INSERT INTO answers (answer, comment, ip) VALUES ({answerId}, {comment[0]}, "{client_host}");'
+            query: str = f"INSERT INTO answers (answer, comment, ip) VALUES ({answerId}, {comment[0]}, '{client_host}');"
             cursor = connection.cursor()
             cursor.execute(query)
         except Exception as e:
