@@ -80,10 +80,10 @@ async def verify_answer(
 
     if answerId == comment[1]:
         return {
-            'id': questionId,
+            'id': comment[0],
             'correct': 1 # correct answer  
             }
     return {
-        'id': questionId,
+        'id': comment[0],
         'correct': 0  # 0 = wrong answer
         }
