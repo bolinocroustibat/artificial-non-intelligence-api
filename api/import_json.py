@@ -13,7 +13,7 @@ def load_real_comments_into_db(filename: str, real: int = 1) -> None:
             for line in data:
                 try:
                     aggressive: int = int(line["annotation"]["label"][0])
-                    raw_content = line["content"].strip().replace('\"', '”')
+                    raw_content: str = line["content"].strip().replace('\"', '”')
                     content: str = '\"' + raw_content + '\"'
                     pattern = r'((?:#|http)\S+)'
                     if not len(re.findall(pattern, content)) and len(list(content.split(" "))) > 1:
@@ -36,7 +36,7 @@ def load_fake_comments_into_db(
             data: dict = json.loads(file.read())
             for line in data["content"].values():
                 try:
-                    raw_content = line.strip().replace('\"', '”')
+                    raw_content: str = line.strip().replace('\"', '”')
                     content: str = '\"' + raw_content + '\"'
                     query: str = f"""INSERT INTO comments(content,real,aggressive) VALUES({content},{real},{aggressive})"""
                     cursor = connection.cursor()
