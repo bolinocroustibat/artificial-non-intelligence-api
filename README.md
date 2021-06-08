@@ -9,7 +9,7 @@
 
 ## Database
 
-Schema:
+SQL commands to create the database schema:
 
 ```sql
 CREATE TABLE comments (
@@ -32,7 +32,16 @@ CREATE TABLE answers (
 );
 ```
 
-To remove duplicate from comments table:
+
+## Import data as JSON files into the database
+
+Use the following script and edit it with the right filenames:
+`python api/import_json.py`
+
+
+## Remove duplicate from comments table
+
+Use this SQL command after import:
 ```sql
 DELETE FROM comments
 WHERE id NOT in(
@@ -47,13 +56,15 @@ WHERE id NOT in(
 ## API
 
 To launch the API locally:
-
 `uvicorn api.main:app --reload`
 
-To import a JSON file into the SQLite database:
 
-`python api/import_json.py`
+## To download the local DB from Heroku
 
+The database is updated with user's answers as it is online. To retrieve this information and avoid overwriting it when updating, one should download the database with the new information before any changes. To do that, use that command:
+```sh
+heroku ps:copy data/db.sqlite3 --app=non-intelligence-api --output=data/db.sqlite3
+```
 
 ## To deploy on Heroku
 
@@ -66,7 +77,7 @@ Deploy with:
 
 ## Comments crawlers
 
-Located in /data-crawler.
+Located in /scraper.
 
 Python script to get comments from online website comments and put them in a SQlite database.
 

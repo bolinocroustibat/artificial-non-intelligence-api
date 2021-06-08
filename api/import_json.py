@@ -48,11 +48,14 @@ def load_fake_comments_into_db(
 
 
 if __name__ == "__main__":
-    filename0 = "../data/kaggle-cyber-trolls.json"
-    load_real_comments_into_db(filename=filename0, real=1)
+    load_real_comments_into_db(filename="../data/kaggle-cyber-trolls.json")
 
-    filename1 = "../data/500_fake_tweets_aggressive_1.json"
-    load_fake_comments_into_db(filename=filename1, aggressive=1, real=0)
+    load_fake_comments_into_db(
+        filename="../data/500_fake_tweets_aggressive_1.json",
+        aggressive=1
+    )
 
-    filename2 = "../data/500_fake_tweets_nonaggressive_1.json"
-    load_fake_comments_into_db(filename=filename2, aggressive=0, real=0)
+    load_fake_comments_into_db(
+        filename="../data/500_fake_tweets_nonaggressive_1.json",
+        aggressive=0
+    )
