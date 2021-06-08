@@ -1,10 +1,14 @@
 import json
 import re
-import sqlite3
+import os
+import psycopg2
+
+
+DATABASE_URL = os.environ['DATABASE_URL']
 
 
 def load_real_comments_into_db(filename: str, real: int = 1) -> None:
-    connection = sqlite3.connect("../data/db.sqlite3")
+    connection = psycopg2.connect(DATABASE_URL, sslmode='require')
     with connection:
         with open (filename, "r") as file:
             data: list = json.loads(file.read())
@@ -30,7 +34,7 @@ def load_fake_comments_into_db(
     filename: str,
     aggressive: int,
     real: int = 0) -> None:
-    connection = sqlite3.connect("../data/db.sqlite3")
+    connection = psycopg2.connect(DATABASE_URL, sslmode='require')
     with connection:
         with open (filename, "r") as file:
             data: dict = json.loads(file.read())
