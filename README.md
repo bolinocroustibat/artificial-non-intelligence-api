@@ -37,7 +37,7 @@ The database consists of two tables:
 - `comments`: stores the human-generated and ai-generated comments, along with their unique ID, a flag `real` to indicate if it's human or ai generated and a few minor other infos. This table is used for the API to serve the game content.
 ```sql
 CREATE TABLE comments (
-	id INTEGER NOT NULL PRIMARY KEY,
+	id SERIAL,
 	content TEXT NOT NULL,
 	real INTEGER NOT NULL,
 	aggressive INTEGER,
@@ -49,7 +49,7 @@ CREATE TABLE comments (
 - `answers`: stores the answers from users from the game. Each answer has a foreign key to the `comments` table, and the IP adress of the user, along with few minor other infos:
 ```sql
 CREATE TABLE answers (
-	id INTEGER NOT NULL PRIMARY KEY,
+	id SERIAL,
 	answer INT NOT NULL,
 	ip VARCHAR,
 	comment INTEGER NOT NULL,
