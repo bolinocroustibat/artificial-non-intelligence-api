@@ -75,7 +75,7 @@ async def verify_answer(
         comment: Tuple = cursor.fetchone()
         try:
             client_host = request.client.host
-            query: str = f'INSERT INTO answers (answer, comment, ip) VALUES ({answerId}, {comment[0]}, "{client_host}");'
+            query: str = f"INSERT INTO answers (answer, comment, ip) VALUES ({answerId}, {comment[0]}, '{client_host}');"
             cursor = connection.cursor()
             cursor.execute(query)
         except Exception as e:
