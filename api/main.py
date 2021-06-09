@@ -108,7 +108,6 @@ async def post_score(score: int, request: Request) -> dict:
         query: str = f"SELECT MAX(score) FROM scores;"
         cursor.execute(query)
         max_score: int = cursor.fetchone()[0]
-        print(max_score)
 
     return {
         'maxScore': max_score,
