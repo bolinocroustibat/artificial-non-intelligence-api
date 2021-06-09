@@ -19,7 +19,7 @@ app.add_middleware(
     #     "http://localhost",
     #     "http://127.0.0.1",
     #     "https://artificial-non-intelligence.herokuapp.com"
-    # ], (allows only the frontend origin, use that for production)
+    # ],  # Allows only the frontend origin, use that for production
     allow_credentials=True,
     # allow_methods=["*"],  # Allows all methods
     allow_methods=["GET"],  # Allows only GET method
@@ -27,7 +27,7 @@ app.add_middleware(
 )
 
 
-@app.get('/get-random-comment')
+@app.get('/comments')
 async def get_random_comment(aggressive: Optional[bool] = None) -> dict:
         """
         Endpoint which takes a random comment from the database (human-generated or AI-generated), and sends it back along with its ID in the database.
@@ -57,7 +57,7 @@ async def get_random_comment(aggressive: Optional[bool] = None) -> dict:
             }
 
 
-@app.get('/verify-answer')
+@app.get('/answers')
 async def verify_answer(
     questionId: int,
     answerId: int,
@@ -90,4 +90,26 @@ async def verify_answer(
     return {
         'id': comment[0],
         'correct': 0  # 0 = wrong answer
+        }
+
+
+@app.get('/scores')
+async def post_score(score: int, request: Request) -> dict:
+    """
+    Endpoint which posts a score.
+    """
+
+    connection = psycopg2.connect(DATABASE_URL, sslmode='require')
+    with connection:
+        client_host = request.client.host
+        query: str = f"INSERT INTO scores (score, ip) VALUES ({score}, '{client_host}');"
+        cursor = connection.cursor()
+        cursor.execute(query)
+        query: str = f"SELECT MAX(score) FROM scores;"
+        cursor.execute(query)
+        max_score: int = cursor.fetchone()[0]
+        print(max_score)
+
+    return {
+        'maxScore': max_score,
         }
