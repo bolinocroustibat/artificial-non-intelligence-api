@@ -37,8 +37,9 @@ uvicorn api.main:app --reload
 ## API endpoints
 
 - `/redoc`: Documentation of the API
-- `/get-random-comment`: Get a random comment (see `/redoc` for full documentation of this endpoint)
-- `/verify-answer`: Verify the user's answer (see `/redoc` for full documentation of this endpoint)
+- `/comments`: GET a random comment (see `/redoc` for full documentation of this endpoint)
+- `/answers`: GET - verify the user's answer (see `/redoc` for full documentation of this endpoint)
+- `/scores`: GET - send score (see `/redoc` for full documentation of this endpoint)
 
 
 ## To deploy on Heroku
