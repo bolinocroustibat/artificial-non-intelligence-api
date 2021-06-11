@@ -18,7 +18,10 @@ app.add_middleware(
     allow_origins=[
         "http://localhost",
         "http://127.0.0.1",
-        "https://artificial-non-intelligence.herokuapp.com"
+        "http://artificial-non-intelligence.herokuapp.com",
+        "https://artificial-non-intelligence.herokuapp.com",
+        "http://www.artificial-non-intelligence.me",
+        "https://www.artificial-non-intelligence.me"
     ],  # Allows only the frontend origin, use that for production
     allow_credentials=True,
     # allow_methods=["*"],  # Allows all methods
