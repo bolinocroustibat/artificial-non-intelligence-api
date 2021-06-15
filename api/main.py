@@ -28,34 +28,9 @@ app.add_middleware(
     ],  # Allows only the frontend origin, use that for production
     allow_credentials=True,
     # allow_methods=["*"],  # Allows all methods
-    allow_methods=["GET", "POST"],  # Allows only GET and POST method
+    allow_methods=["GET", "POST"],  # Allows only GET and POST methods
     allow_headers=["*"],  # Allows all headers
 )
-
-
-@app.get('/questions')
-async def get_new_question(aggressive: Optional[bool] = None) -> dict:
-        """
-        Endpoint which takes a random comment from the database (human-generated or AI-generated), and sends it back along with its ID in the database.
-        """
-
-        connection = psycopg2.connect(DATABASE_URL, sslmode='require')
-        with connection:
-            real: int = random.choice([0, 1])
-            if type(aggressive) == bool:
-                aggressive_int = 1 if aggressive else 0
-                query: str = f"SELECT id, content FROM questions WHERE real={real} AND aggressive={aggressive_int} ORDER BY RANDOM() LIMIT 1;"
-
-            else:
-                query: str = f"SELECT id, content FROM questions WHERE real={real} ORDER BY RANDOM() LIMIT 1;"
-            cursor = connection.cursor()
-            cursor.execute(query)
-            question: Tuple = cursor.fetchone()
-            cursor.close()
-        return {
-            'id': question[0], 
-            'question': question[1],
-            }
 
 
 @app.post('/sessions')
@@ -74,6 +49,31 @@ async def start_new_session(request: Request) -> dict:
     return {'sessionUid': session_uid}
 
 
+@app.get('/questions')
+async def get_new_question(aggressive: Optional[bool] = None) -> dict:
+    """
+    Endpoint which takes a random comment from the database (human-generated or AI-generated), and sends it back along with its ID in the database.
+    """
+
+    connection = psycopg2.connect(DATABASE_URL, sslmode='require')
+    with connection:
+        real: int = random.choice([0, 1])
+        if type(aggressive) == bool:
+            aggressive_int = 1 if aggressive else 0
+            query: str = f"SELECT id, content FROM questions WHERE real={real} AND aggressive={aggressive_int} ORDER BY RANDOM() LIMIT 1;"
+
+        else:
+            query: str = f"SELECT id, content FROM questions WHERE real={real} ORDER BY RANDOM() LIMIT 1;"
+        cursor = connection.cursor()
+        cursor.execute(query)
+        question: Tuple = cursor.fetchone()
+        cursor.close()
+    return {
+        'id': question[0], 
+        'question': question[1],
+        }
+
+
 class AnswerPayload(BaseModel):
     sessionUid: str
     questionId: int
@@ -86,7 +86,7 @@ async def post_answer(
     request: Request
     ) -> dict:
     """
-    Endpoint which receives the answer from the user from the frontend, compares to the fake flag of the comment in the DB, and updates the score.
+    Endpoint which receives the answer from the user from the frontend, compares to the fake flag of the comment in the DB updates the score and the lives and end the game if lost
     """
     print(body)
     connection = psycopg2.connect(DATABASE_URL, sslmode='require')
