@@ -12,7 +12,7 @@ For the frontend, check the [dedicated frontend repo](https://github.com/bolinoc
 
 - Python 3.8 or 3.9
 - FastAPI
-- PostgreSQL database (currently Heroku Postgre)
+- MySQL database (currently Heroku Postgre)
 - Uvicorn web server
 
 

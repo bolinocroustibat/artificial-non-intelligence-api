@@ -3,7 +3,6 @@ from datetime import datetime
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import os
-import psycopg2
 from pydantic import BaseModel
 import random
 from typing import Optional, Tuple
