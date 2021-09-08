@@ -44,12 +44,12 @@ uvicorn api.main:app --reload
 
 ## To deploy on Heroku
 
-Add Heroku app as git origin, if necessary:
+Add Heroku app as git origin, if necessary (install Heroku CLI first):
 ```sh
 heroku git:remote -a non-intelligence-api
 ```
 
-Deploy with:
+Deploy the local heroku branch on Heroku origin main branch with:
 ```sh
-git push heroku main
+git push heroku heroku:main
 ```
