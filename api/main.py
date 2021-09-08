@@ -10,6 +10,7 @@ import random
 from typing import Optional, Tuple
 import uuid
 
+from settings import DATABASE_DB,DATABASE_HOST, DATABASE_PASSWORD, DATABASE_PORT, DATABASE_USER
 
 loop = asyncio.get_event_loop()
 
@@ -36,11 +37,11 @@ app.add_middleware(
 
 async def get_db_connection():
     return await aiomysql.connect(
-        host=os.environ["DATABASE_HOST"],
-        port=int(os.environ["DATABASE_PORT"]),
-        user=os.environ["DATABASE_USER"],
-        password=os.environ["DATABASE_PASSWORD"],
-        db=os.environ["DATABASE_DB"],
+        host=DATABASE_HOST,
+        port=int(DATABASE_PORT),
+        user=DATABASE_USER,
+        password=DATABASE_PASSWORD,
+        db=DATABASE_DB,
         loop=loop,
     )
 

@@ -154,3 +154,6 @@ raw_data/
 __pycache__/
 .env
 .envrc
+
+# Local settings
+settings.py
