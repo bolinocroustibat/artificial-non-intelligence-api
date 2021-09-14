@@ -4,7 +4,6 @@ import asyncio
 import aiomysql
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-import os
 from pydantic import BaseModel
 import random
 from typing import Optional, Tuple
@@ -21,8 +20,7 @@ app.add_middleware(
     CORSMiddleware,
     # allow_origins=["*"],  # Allows all origins (debug, remove for production)
     allow_origins=[
-        "http://localhost",
-        "http://127.0.0.1",
+        "http://localhost:8888",
         "http://artificial-non-intelligence.herokuapp.com",
         "https://artificial-non-intelligence.herokuapp.com",
         "http://www.artificial-non-intelligence.me",
