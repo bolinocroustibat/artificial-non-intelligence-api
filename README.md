@@ -48,6 +48,6 @@ uvicorn api.main:app --reload
 ## API endpoints
 
 - `/redoc`: Documentation of the API
-- `/comments`: GET a random comment (see `/redoc` for full documentation of this endpoint)
+- `/questions`: GET a random question (see `/redoc` for full documentation of this endpoint)
 - `/answers`: GET - verify the user's answer (see `/redoc` for full documentation of this endpoint)
 - `/scores`: GET - send score (see `/redoc` for full documentation of this endpoint)
