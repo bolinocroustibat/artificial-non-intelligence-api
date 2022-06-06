@@ -22,7 +22,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:8888",
         "http://artificial-non-intelligence.netlify.app",
-        "https://artificial-non-intelligence.netlify.app/",
+        "https://artificial-non-intelligence.netlify.app",
         "http://artificial-non-intelligence.herokuapp.com",
         "https://artificial-non-intelligence.herokuapp.com",
         "http://www.artificial-non-intelligence.me",
