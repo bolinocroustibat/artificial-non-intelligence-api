@@ -14,7 +14,7 @@ dependencies = [
     "toml<1.0.0,>=0.10.2",
     "uvicorn<1.0.0,>=0.14.0",
 ]
-requires-python = ">=3.7,<4.0"
+requires-python = ">=3.11,<3.12"
 dynamic = ["classifiers", "classifiers"]
 license = { text = "MIT" }
 
@@ -36,7 +36,7 @@ authors = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.11"
 aiomysql = "^0.0.21"
 fastapi = "^0.79.0"
 sentry-sdk = {extras = ["fastapi"], version = "^1.15.0"}
@@ -45,6 +45,8 @@ uvicorn = "^0.14.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
+ipython = "^8.6.0"
+ruff = "^0.0.247"
 
 [tool.pdm]
 includes = []

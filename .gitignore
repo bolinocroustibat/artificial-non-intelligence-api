@@ -4,6 +4,9 @@ Thumbs.db
 #Ignore MacOS files
 *.DS_Store
 
+# VScode
+.vscode
+
 #Ignore files build by Visual Studio
 *.obj
 *.exe
