@@ -1,15 +1,17 @@
 [project]
 name = "artificial-non-intelligence-api"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = [
-    { name = "Adrien Carpentier", email = "moi@adriencarpentier.com" },
+    { name = "Adrien Carpentier", email = "me@adriencarpentier.com" },
     { name = "Philip Lin", email = "philip.lin@gmail.com" },
     { name = "Dilnoza Mirdjalilova", email = "dmirdjalilova@gmail.com" },
 ]
 dependencies = [
     "aiomysql<1.0.0,>=0.0.21",
     "fastapi<1.0.0,>=0.65.1",
+    "sentry-sdk<2.0.0,>=1.15.0",
+    "toml<1.0.0,>=0.10.2",
     "uvicorn<1.0.0,>=0.14.0",
 ]
 requires-python = ">=3.7,<4.0"
@@ -25,10 +27,10 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "artificial-non-intelligence-api"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = [
-    "Adrien Carpentier <moi@adriencarpentier.com>",
+    "Adrien Carpentier <me@adriencarpentier.com>",
     "Philip Lin <philip.lin@gmail.com>",
     "Dilnoza Mirdjalilova <dmirdjalilova@gmail.com>",
 ]
@@ -37,9 +39,14 @@ authors = [
 python = "^3.7"
 aiomysql = "^0.0.21"
 fastapi = "^0.65.1"
+sentry-sdk = "^1.15.0"
+toml = "^0.10.2"
 uvicorn = "^0.14.0"
 
 [tool.poetry.dev-dependencies]
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.1.0"
 
 [tool.pdm]
 includes = []

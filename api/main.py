@@ -1,15 +1,37 @@
-from datetime import datetime
-
 import asyncio
+import random
+import uuid
+from datetime import datetime
+from typing import Optional, Tuple
+
 import aiomysql
-from fastapi import FastAPI, Request, HTTPException
+import sentry_sdk
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import random
-from typing import Optional, Tuple
-import uuid
 
-from settings import DATABASE_DB,DATABASE_HOST, DATABASE_PASSWORD, DATABASE_PORT, DATABASE_USER
+from settings import (
+    APP_NAME,
+    DATABASE_DB,
+    DATABASE_HOST,
+    DATABASE_PASSWORD,
+    DATABASE_PORT,
+    DATABASE_USER,
+    ORIGINS,
+    SENTRY_DSN,
+    VERSION,
+)
+
+# Initialize Sentry error logging
+sentry_sdk.init(
+    dsn=SENTRY_DSN,
+    release=f"{APP_NAME}@{VERSION}",
+    traces_sample_rate=1.0,
+    # Experimental profiling
+    _experiments={
+        "profiles_sample_rate": 1.0,
+    },
+)
 
 loop = asyncio.get_event_loop()
 
@@ -19,15 +41,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     # allow_origins=["*"],  # Allows all origins (debug, remove for production)
-    allow_origins=[
-        "http://localhost:8888",
-        "http://artificial-non-intelligence.netlify.app",
-        "https://artificial-non-intelligence.netlify.app",
-        "http://artificial-non-intelligence.herokuapp.com",
-        "https://artificial-non-intelligence.herokuapp.com",
-        "http://www.artificial-non-intelligence.me",
-        "https://www.artificial-non-intelligence.me",
-    ],  # Allows only the frontend origin, use that for production
+    allow_origins=ORIGINS,  # Allows only the frontend origin, use that for production
     allow_credentials=True,
     # allow_methods=["*"],  # Allows all methods
     allow_methods=["GET", "POST"],  # Allows only GET and POST methods
@@ -44,6 +58,7 @@ async def get_db_connection():
         db=DATABASE_DB,
         loop=loop,
     )
+
 
 @app.post("/sessions")
 async def start_new_session(request: Request) -> dict:
@@ -101,13 +116,11 @@ async def post_answer(body: AnswerPayload, request: Request) -> dict:
     # print(body)
 
     conn = await get_db_connection()
-    
+
     async with conn.cursor() as cursor:
         try:
             # Get the session ID and current score
-            query: str = (
-                f"SELECT id, score, lives FROM sessions WHERE `uuid`='{body.sessionUid}';"
-            )
+            query: str = f"SELECT id, score, lives FROM sessions WHERE `uuid`='{body.sessionUid}';"
             await cursor.execute(query)
             session: Tuple = await cursor.fetchone()
             # print(session)
@@ -150,7 +163,9 @@ async def post_answer(body: AnswerPayload, request: Request) -> dict:
             lives = lives - 1
             if lives > 0:
                 # Update the session with the lives -1
-                query: str = f"UPDATE sessions SET lives={lives} WHERE `id`={session_id};"
+                query: str = (
+                    f"UPDATE sessions SET lives={lives} WHERE `id`={session_id};"
+                )
                 await cursor.execute(query)
                 await conn.commit()
             else:
