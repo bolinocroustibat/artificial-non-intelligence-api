@@ -1,6 +1,6 @@
 [project]
 name = "artificial-non-intelligence-api"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 authors = [
     { name = "Adrien Carpentier", email = "me@adriencarpentier.com" },
@@ -27,7 +27,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "artificial-non-intelligence-api"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 authors = [
     "Adrien Carpentier <me@adriencarpentier.com>",
