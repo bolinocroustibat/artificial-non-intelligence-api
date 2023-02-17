@@ -43,8 +43,6 @@ sentry-sdk = {extras = ["fastapi"], version = "^1.15.0"}
 toml = "^0.10.2"
 uvicorn = "^0.14.0"
 
-[tool.poetry.dev-dependencies]
-
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
 
