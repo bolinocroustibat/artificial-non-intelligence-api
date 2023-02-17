@@ -1,7 +1,7 @@
 [project]
 name = "artificial-non-intelligence-api"
 version = "0.1.2"
-description = ""
+description = "A deep learning generated web game to raise awareness about AI and trolls, and to have fun. API part. Made by @bolinocroustibat, @Noza8828 and @phlln."
 authors = [
     { name = "Adrien Carpentier", email = "me@adriencarpentier.com" },
     { name = "Philip Lin", email = "philip.lin@gmail.com" },
@@ -28,7 +28,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "artificial-non-intelligence-api"
 version = "0.1.2"
-description = ""
+description = "A deep learning generated web game to raise awareness about AI and trolls, and to have fun. API part. Made by @bolinocroustibat, @Noza8828 and @phlln."
 authors = [
     "Adrien Carpentier <me@adriencarpentier.com>",
     "Philip Lin <philip.lin@gmail.com>",
