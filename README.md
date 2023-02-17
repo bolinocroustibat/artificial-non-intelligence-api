@@ -12,7 +12,7 @@ For the frontend, check the [dedicated frontend repo](https://github.com/bolinoc
 
 ## Main dependencies
 
-- Python 3.9
+- Python 3.11
 - [FastAPI](https://fastapi.tiangolo.com/)
 - MySQL database (there were a previous version using PostgreSQL to be hosted by Heroku, but it's deprecated. Still available on [heroku branch](https://github.com/bolinocroustibat/artificial-non-intelligence-api/tree/heroku))
 - Uvicorn web server
