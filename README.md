@@ -20,8 +20,13 @@ For the frontend, check the [dedicated frontend repo](https://github.com/bolinoc
 
 ## Run the API locally
 
-Create or update a settings.py file on the root with the following settings (example):
+Create or update a `settings.py` file on the root with the following settings corresponding on your environement, for example:
 ```
+import toml
+pyproject: dict = toml.load("pyproject.toml")
+APP_NAME: str = pyproject["project"]["name"]
+VERSION: str = pyproject["project"]["version"]
+ENVIRONMENT="local"
 DATABASE_HOST="127.0.0.1"
 DATABASE_USER="root"
 DATABASE_PASSWORD="root"

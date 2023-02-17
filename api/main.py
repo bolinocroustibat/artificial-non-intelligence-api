@@ -17,21 +17,24 @@ from settings import (
     DATABASE_PASSWORD,
     DATABASE_PORT,
     DATABASE_USER,
+    ENVIRONMENT,
     ORIGINS,
     SENTRY_DSN,
     VERSION,
 )
 
 # Initialize Sentry error logging
-sentry_sdk.init(
-    dsn=SENTRY_DSN,
-    release=f"{APP_NAME}@{VERSION}",
-    traces_sample_rate=1.0,
-    # Experimental profiling
-    _experiments={
-        "profiles_sample_rate": 1.0,
-    },
-)
+if ENVIRONMENT in ["production", "staging"]:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        release=f"{APP_NAME}@{VERSION}",
+        environment=ENVIRONMENT,
+        traces_sample_rate=1.0,
+        # Experimental profiling
+        _experiments={
+            "profiles_sample_rate": 1.0,
+        },
+    )
 
 loop = asyncio.get_event_loop()
 
