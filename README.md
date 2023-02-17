@@ -27,6 +27,11 @@ DATABASE_USER="root"
 DATABASE_PASSWORD="root"
 DATABASE_PORT="8889"
 DATABASE_DB="artificial-non-intelligence"
+ORIGINS=[
+    "http://localhost:8888",
+    "https://artificial-non-intelligence.netlify.app",
+]
+SENTRY_DSN = "https://abc123@abc123.ingest.sentry.io/abc123"
 ```
 
 Create a virtual environment for the project, and install the Python dependencies packages with:
@@ -48,6 +53,6 @@ uvicorn api.main:app --reload
 ## API endpoints
 
 - `/redoc`: Documentation of the API
-- `/sessions`: GET a new session id (see `/redoc` for full documentation of this endpoint)
+- `/sessions`: POST a new session id (see `/redoc` for full documentation of this endpoint)
 - `/questions`: GET a random question (see `/redoc` for full documentation of this endpoint)
 - `/answers`: POST - post the user's answer (see `/redoc` for full documentation of this endpoint)
