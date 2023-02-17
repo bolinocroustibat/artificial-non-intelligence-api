@@ -25,6 +25,7 @@ Create or update a `settings.py` file on the root with the following settings co
 import toml
 pyproject: dict = toml.load("pyproject.toml")
 APP_NAME: str = pyproject["project"]["name"]
+DESCRIPTION: str = pyproject["project"]["decription"]
 VERSION: str = pyproject["project"]["version"]
 ENVIRONMENT="local"
 DATABASE_HOST="127.0.0.1"

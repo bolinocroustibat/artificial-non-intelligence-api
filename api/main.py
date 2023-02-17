@@ -17,6 +17,7 @@ from settings import (
     DATABASE_PASSWORD,
     DATABASE_PORT,
     DATABASE_USER,
+    DESCRIPTION,
     ENVIRONMENT,
     ORIGINS,
     SENTRY_DSN,
@@ -27,8 +28,8 @@ from settings import (
 if ENVIRONMENT in ["production", "staging"]:
     sentry_sdk.init(
         dsn=SENTRY_DSN,
-        release=f"{APP_NAME}@{VERSION}",
         environment=ENVIRONMENT,
+        release=f"{APP_NAME}@{VERSION}",
         traces_sample_rate=1.0,
         # Experimental profiling
         _experiments={
@@ -38,7 +39,7 @@ if ENVIRONMENT in ["production", "staging"]:
 
 loop = asyncio.get_event_loop()
 
-app = FastAPI()
+app = FastAPI(title=APP_NAME, description=DESCRIPTION, version=VERSION)
 
 # For security (avoid another app to connect to this API)
 app.add_middleware(
