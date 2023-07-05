@@ -22,10 +22,12 @@ For the frontend, check the [dedicated frontend repo](https://github.com/bolinoc
 
 Create or update a `settings.py` file on the root with the following settings corresponding on your environement, for example:
 ```
-import toml
-pyproject: dict = toml.load("pyproject.toml")
+import tomllib
+
+with open("pyproject.toml", "rb") as f:
+    pyproject: dict = tomllib.load(f)
 APP_NAME: str = pyproject["project"]["name"]
-DESCRIPTION: str = pyproject["project"]["decription"]
+DESCRIPTION: str = pyproject["project"]["description"]
 VERSION: str = pyproject["project"]["version"]
 ENVIRONMENT="local"
 DATABASE_HOST="127.0.0.1"

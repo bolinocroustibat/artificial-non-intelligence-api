@@ -150,6 +150,7 @@ poetry.lock
 
 # PDM
 .pdm.toml
+.pdm-python
 pdm.lock
 
 *.egg-info
