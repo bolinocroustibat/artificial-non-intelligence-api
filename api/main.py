@@ -1,10 +1,9 @@
-import asyncio
 import random
 import uuid
 from datetime import datetime
 from typing import Optional, Tuple
 
-import aiomysql
+import psycopg
 import sentry_sdk
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -37,7 +36,6 @@ if ENVIRONMENT in ["production", "staging"]:
         },
     )
 
-loop = asyncio.get_event_loop()
 
 app = FastAPI(title=APP_NAME, description=DESCRIPTION, version=VERSION)
 
@@ -53,32 +51,25 @@ app.add_middleware(
 )
 
 
-async def get_db_connection():
-    return await aiomysql.connect(
-        host=DATABASE_HOST,
-        port=int(DATABASE_PORT),
-        user=DATABASE_USER,
-        password=DATABASE_PASSWORD,
-        db=DATABASE_DB,
-        loop=loop,
-    )
-
-
 @app.post("/sessions")
 async def start_new_session(request: Request) -> dict:
     """
     Start a new game, create a session
     """
     session_uid: str = uuid.uuid4()
-    conn = await get_db_connection()
-    client_host = request.client.host
-    async with conn.cursor() as cursor:
-        await cursor.execute(
-            f"INSERT INTO sessions (ip, uuid) VALUES ('{client_host}', '{session_uid}');"
-        )
-        await conn.commit()
-        # print(cursor.description)
-    conn.close()
+    connection = psycopg.connect(
+        host=DATABASE_HOST,
+        port=DATABASE_PORT,
+        dbname=DATABASE_DB,
+        user=DATABASE_USER,
+        password=DATABASE_PASSWORD,
+    )
+    with connection:
+        client_host = request.client.host
+        query: str = f"INSERT INTO sessions (ip, uuid) VALUES ('{client_host}', '{session_uid}');"
+        cursor = connection.cursor()
+        cursor.execute(query)
+        cursor.close()
     return {"sessionUid": session_uid}
 
 
@@ -87,19 +78,26 @@ async def get_new_question(aggressive: Optional[bool] = None) -> dict:
     """
     Endpoint which takes a random comment from the database (human-generated or AI-generated), and sends it back along with its ID in the database.
     """
-    conn = await get_db_connection()
-    real: int = random.choice([0, 1])
-    if type(aggressive) == bool:
-        aggressive_int = 1 if aggressive else 0
-        query: str = f"SELECT id, content FROM questions WHERE `real`={real} AND `aggressive`={aggressive_int} ORDER BY RAND() LIMIT 1;"
 
-    else:
-        query: str = f"SELECT id, content FROM questions WHERE `real`={real} ORDER BY RAND() LIMIT 1;"
-    async with conn.cursor() as cursor:
-        await cursor.execute(query)
-        # print(cursor.description)
-        question: Tuple = await cursor.fetchone()
-    conn.close()
+    connection = psycopg.connect(
+        host=DATABASE_HOST,
+        port=DATABASE_PORT,
+        dbname=DATABASE_DB,
+        user=DATABASE_USER,
+        password=DATABASE_PASSWORD,
+    )
+    with connection:
+        real: int = random.choice([0, 1])
+        if type(aggressive) == bool:
+            aggressive_int = 1 if aggressive else 0
+            query: str = f"SELECT id, content FROM questions WHERE real={real} AND aggressive={aggressive_int} ORDER BY RANDOM() LIMIT 1;"
+
+        else:
+            query: str = f"SELECT id, content FROM questions WHERE real={real} ORDER BY RANDOM() LIMIT 1;"
+        cursor = connection.cursor()
+        cursor.execute(query)
+        question: Tuple = cursor.fetchone()
+        cursor.close()
     return {
         "id": question[0],
         "question": question[1],
@@ -117,17 +115,22 @@ async def post_answer(body: AnswerPayload, request: Request) -> dict:
     """
     Endpoint which receives the answer from the user from the frontend, compares to the fake flag of the comment in the DB updates the score and the lives and end the game if lost
     """
-    # print(body)
-
-    conn = await get_db_connection()
-
-    async with conn.cursor() as cursor:
+    connection = psycopg.connect(
+        host=DATABASE_HOST,
+        port=DATABASE_PORT,
+        dbname=DATABASE_DB,
+        user=DATABASE_USER,
+        password=DATABASE_PASSWORD,
+    )
+    with connection:
         try:
             # Get the session ID and current score
-            query: str = f"SELECT id, score, lives FROM sessions WHERE `uuid`='{body.sessionUid}';"
-            await cursor.execute(query)
-            session: Tuple = await cursor.fetchone()
-            # print(session)
+            query: str = (
+                f"SELECT id, score, lives FROM sessions WHERE uuid='{body.sessionUid}';"
+            )
+            cursor = connection.cursor()
+            cursor.execute(query)
+            session: Tuple = cursor.fetchone()
             session_id: int = session[0]
             score: int = session[1]
             lives: int = session[2]
@@ -137,9 +140,10 @@ async def post_answer(body: AnswerPayload, request: Request) -> dict:
 
         try:
             # Get the question
-            query: str = f"SELECT id, `real` FROM questions WHERE id={body.questionId};"
-            await cursor.execute(query)
-            question: Tuple = await cursor.fetchone()
+            query: str = f"SELECT id, real FROM questions WHERE id={body.questionId};"
+            cursor = connection.cursor()
+            cursor.execute(query)
+            question: Tuple = cursor.fetchone()
             question_id: int = question[0]
             real: int = question[1]
         except Exception as e:
@@ -150,8 +154,8 @@ async def post_answer(body: AnswerPayload, request: Request) -> dict:
             # Add answer to the DB
             client_host = request.client.host
             query: str = f"INSERT INTO answers (answer, question_id, ip, session_id) VALUES ({body.answer}, {question_id}, '{client_host}', {session_id});"
-            await cursor.execute(query)
-            await conn.commit()
+            cursor = connection.cursor()
+            cursor.execute(query)
         except Exception as e:
             print(e)
 
@@ -159,29 +163,27 @@ async def post_answer(body: AnswerPayload, request: Request) -> dict:
             # Update the session with the score +1
             correct = 1
             score += 1
-            query: str = f"UPDATE sessions SET score={score} WHERE `id`={session_id};"
-            await cursor.execute(query)
-            await conn.commit()
+            query: str = f"UPDATE sessions SET score={score} WHERE id={session_id};"
+            cursor = connection.cursor()
+            cursor.execute(query)
         else:
             correct = 0
             lives = lives - 1
             if lives > 0:
                 # Update the session with the lives -1
-                query: str = (
-                    f"UPDATE sessions SET lives={lives} WHERE `id`={session_id};"
-                )
-                await cursor.execute(query)
-                await conn.commit()
+                query: str = f"UPDATE sessions SET lives={lives} WHERE id={session_id};"
+                cursor = connection.cursor()
+                cursor.execute(query)
             else:
                 # End the session and get the top score
                 ended = datetime.utcnow()
-                query: str = f"UPDATE sessions SET lives=0, ended='{ended}' WHERE `id`={session_id};"
-                await cursor.execute(query)
-                await conn.commit()
+                query: str = f"UPDATE sessions SET lives=0, ended='{ended}' WHERE id={session_id};"
+                cursor = connection.cursor()
+                cursor.execute(query)
                 query: str = f"SELECT MAX(score) FROM sessions;"
-                await cursor.execute(query)
-                response = await cursor.fetchone()
-                top_score: int = response[0]
+                cursor.execute(query)
+                top_score: int = cursor.fetchone()[0]
+                cursor.close()
                 return {
                     "correct": correct,
                     "lives": 0,
@@ -189,6 +191,6 @@ async def post_answer(body: AnswerPayload, request: Request) -> dict:
                     "topScore": top_score,
                 }
 
-    conn.close()
+        cursor.close()
 
     return {"correct": correct, "lives": lives, "score": score}

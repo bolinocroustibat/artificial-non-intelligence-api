@@ -14,7 +14,7 @@ For the frontend, check the [dedicated frontend repo](https://github.com/bolinoc
 
 - Python 3.11
 - [FastAPI](https://fastapi.tiangolo.com/)
-- MySQL database (there were a previous version using PostgreSQL to be hosted by Heroku, but it's deprecated. Still available on [heroku branch](https://github.com/bolinocroustibat/artificial-non-intelligence-api/tree/heroku))
+- a PostgreSQL database
 - Uvicorn web server
 
 
@@ -33,7 +33,7 @@ ENVIRONMENT="local"
 DATABASE_HOST="127.0.0.1"
 DATABASE_USER="root"
 DATABASE_PASSWORD="root"
-DATABASE_PORT="8889"
+DATABASE_PORT="5432"
 DATABASE_DB="artificial-non-intelligence"
 ORIGINS=[
     "http://localhost:8888",
@@ -47,14 +47,18 @@ Create a virtual environment for the project, and install the Python dependencie
 pip install -r requirements.txt
 ```
 
-...or, if you use [Poetry](https://python-poetry.org/) (which is much better and strongly advised):
+...or, if you use [PDM](https://pdm.fming.dev/):
 ```sh
-poetry install
+pdm install
 ```
 
 To run the API for local testing, launch the web server in your virtual environnement with:
 ```sh
 uvicorn api.main:app --reload
+```
+or
+```sh
+pdm run uvicorn api.main:app --reload
 ```
 
 
