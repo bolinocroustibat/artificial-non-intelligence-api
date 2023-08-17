@@ -66,7 +66,7 @@ async def start_new_session(request: Request) -> dict:
     )
     with connection:
         client_host = request.client.host
-        query: str = f"INSERT INTO sessions (ip, uuid) VALUES ('{client_host}', '{session_uid}');"
+        query: str = f"INSERT INTO sessions (ip, uuid) VALUES ('{client_host}', '{session_uid}');"  # noqa E501
         cursor = connection.cursor()
         cursor.execute(query)
         cursor.close()
