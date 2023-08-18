@@ -33,7 +33,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /root/www/artificial-non-intelligence-api
-            source /root/www/artificial-non-intelligence-api/venv/bin/activate
+            source /root/www/artificial-non-intelligence-api/.venv/bin/activate
             pip install -r /root/www/artificial-non-intelligence-api/requirements.txt
             sudo systemctl restart ani-api.service
 
