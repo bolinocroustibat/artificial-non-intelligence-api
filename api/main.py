@@ -1,7 +1,6 @@
 import random
 import uuid
 from datetime import datetime
-from typing import Optional, Tuple
 
 import psycopg
 import sentry_sdk
@@ -74,7 +73,7 @@ async def start_new_session(request: Request) -> dict:
 
 
 @app.get("/questions")
-async def get_new_question(aggressive: Optional[bool] = None) -> dict:
+async def get_new_question(aggressive: bool | None = None) -> dict:
     """
     Endpoint which takes a random comment from the database (human-generated or AI-generated), and sends it back along with its ID in the database.
     """
@@ -96,7 +95,7 @@ async def get_new_question(aggressive: Optional[bool] = None) -> dict:
             query: str = f"SELECT id, content FROM questions WHERE real={real} ORDER BY RANDOM() LIMIT 1;"
         cursor = connection.cursor()
         cursor.execute(query)
-        question: Tuple = cursor.fetchone()
+        question: tuple = cursor.fetchone()
         cursor.close()
     return {
         "id": question[0],
@@ -130,7 +129,7 @@ async def post_answer(body: AnswerPayload, request: Request) -> dict:
             )
             cursor = connection.cursor()
             cursor.execute(query)
-            session: Tuple = cursor.fetchone()
+            session: tuple = cursor.fetchone()
             session_id: int = session[0]
             score: int = session[1]
             lives: int = session[2]
@@ -143,7 +142,7 @@ async def post_answer(body: AnswerPayload, request: Request) -> dict:
             query: str = f"SELECT id, real FROM questions WHERE id={body.questionId};"
             cursor = connection.cursor()
             cursor.execute(query)
-            question: Tuple = cursor.fetchone()
+            question: tuple = cursor.fetchone()
             question_id: int = question[0]
             real: int = question[1]
         except Exception as e:
