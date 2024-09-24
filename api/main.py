@@ -87,12 +87,14 @@ async def get_new_question(aggressive: bool | None = None) -> dict:
     )
     with connection:
         real: int = random.choice([0, 1])
-        if type(aggressive) == bool:
+        if type(aggressive) is bool:
             aggressive_int = 1 if aggressive else 0
             query: str = f"SELECT id, content FROM questions WHERE real={real} AND aggressive={aggressive_int} ORDER BY RANDOM() LIMIT 1;"
 
         else:
-            query: str = f"SELECT id, content FROM questions WHERE real={real} ORDER BY RANDOM() LIMIT 1;"
+            query: str = (
+                f"SELECT id, content FROM questions WHERE real={real} ORDER BY RANDOM() LIMIT 1;"
+            )
         cursor = connection.cursor()
         cursor.execute(query)
         question: tuple = cursor.fetchone()
@@ -124,9 +126,7 @@ async def post_answer(body: AnswerPayload, request: Request) -> dict:
     with connection:
         try:
             # Get the session ID and current score
-            query: str = (
-                f"SELECT id, score, lives FROM sessions WHERE uuid='{body.sessionUid}';"
-            )
+            query: str = f"SELECT id, score, lives FROM sessions WHERE uuid='{body.sessionUid}';"
             cursor = connection.cursor()
             cursor.execute(query)
             session: tuple = cursor.fetchone()
@@ -179,7 +179,7 @@ async def post_answer(body: AnswerPayload, request: Request) -> dict:
                 query: str = f"UPDATE sessions SET lives=0, ended='{ended}' WHERE id={session_id};"
                 cursor = connection.cursor()
                 cursor.execute(query)
-                query: str = f"SELECT MAX(score) FROM sessions;"
+                query: str = "SELECT MAX(score) FROM sessions;"
                 cursor.execute(query)
                 top_score: int = cursor.fetchone()[0]
                 cursor.close()
