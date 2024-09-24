@@ -38,7 +38,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /root/www/artificial-non-intelligence-api
+            cd /home/www/artificial-non-intelligence-api
             uv sync
             sudo systemctl restart ani-api.service
 
