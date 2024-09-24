@@ -1,6 +1,6 @@
 [project]
 name = "artificial-non-intelligence-api"
-version = "0.3.1"
+version = "0.3.2"
 description = "A deep learning generated web game to raise awareness about AI and trolls, and to have fun. API part. Made by @bolinocroustibat, @Noza8828 and @phlln."
 authors = [
     { name = "Adrien Carpentier", email = "me@adriencarpentier.com" },
@@ -11,6 +11,7 @@ dependencies = [
     "psycopg>=3.1.9",
     "psycopg-binary>=3.1.9",
     "fastapi<1.0.0,>=0.79.0",
+    "gunicorn>=23.0.0",
     "sentry-sdk<2.0.0,>=1.15.0",
     "uvicorn<1.0.0,>=0.14.0",
 ]
