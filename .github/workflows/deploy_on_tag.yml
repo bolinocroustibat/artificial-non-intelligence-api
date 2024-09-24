@@ -6,11 +6,17 @@ on:
       - '*'
 
 jobs:
+
   deploy-prod:
+
     name: Deploy to prod from ${{ github.ref_name }}/${{ github.sha }}
+
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
@@ -33,12 +39,11 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /root/www/artificial-non-intelligence-api
-            source /root/www/artificial-non-intelligence-api/.venv/bin/activate
-            pip install -r /root/www/artificial-non-intelligence-api/requirements.txt
+            uv sync
             sudo systemctl restart ani-api.service
 
       - name: Create Sentry release
-        uses: getsentry/action-release@v1.2.1
+        uses: getsentry/action-release@v1.7.0
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: "adrien-carpentier"

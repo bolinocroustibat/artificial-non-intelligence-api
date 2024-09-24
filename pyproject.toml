@@ -1,6 +1,6 @@
 [project]
 name = "artificial-non-intelligence-api"
-version = "0.3.0"
+version = "0.3.1"
 description = "A deep learning generated web game to raise awareness about AI and trolls, and to have fun. API part. Made by @bolinocroustibat, @Noza8828 and @phlln."
 authors = [
     { name = "Adrien Carpentier", email = "me@adriencarpentier.com" },
@@ -14,41 +14,20 @@ dependencies = [
     "sentry-sdk<2.0.0,>=1.15.0",
     "uvicorn<1.0.0,>=0.14.0",
 ]
-requires-python = ">=3.11,<3.12"
+requires-python = ">=3.10,<3.13"
 dynamic = ["classifiers", "classifiers"]
 license = { text = "MIT" }
 
 [project.urls]
 homepage = "https://github.com/bolinocroustibat/artificial-non-intelligence-api"
 
-[build-system]
-requires = ["pdm-pep517"]
-build-backend = "pdm.pep517.api"
+[tool.ruff]
+line-length = 100
+lint = { extend-select = ["I"] }
 
-[tool.pdm]
-includes = []
+# Necessary to avoid issues when installing when using `pip install .`
+[tool.setuptools]
+py-modules = []
 
-[tool.pdm.dev-dependencies]
-dev = []
-
-[tool.poetry]
-name = "artificial-non-intelligence-api"
-version = "0.2.0"
-description = "A deep learning generated web game to raise awareness about AI and trolls, and to have fun. API part. Made by @bolinocroustibat, @Noza8828 and @phlln."
-authors = [
-    "Adrien Carpentier <me@adriencarpentier.com>",
-    "Philip Lin <philip.lin@gmail.com>",
-    "Dilnoza Mirdjalilova <dmirdjalilova@gmail.com>",
-]
-
-[tool.poetry.dependencies]
-python = "^3.11"
-psycopg = "^3.1.9"
-fastapi = "^0.79.0"
-sentry-sdk = {extras = ["fastapi"], version = "^1.15.0"}
-uvicorn = "^0.14.0"
-
-[tool.poetry.group.dev.dependencies]
-black = "^23.1.0"
-ipython = "^8.6.0"
-ruff = "^0.0.247"
+[tool.uv]
+dev-dependencies = ["ruff>=0.6.5"]

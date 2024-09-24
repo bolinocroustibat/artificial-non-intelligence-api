@@ -38,6 +38,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+__pypackages__/
 .Python
 build/
 develop-eggs/
@@ -108,9 +109,6 @@ ipython_config.py
 
 # pyenv
 .python-version
-
-# pipenv
-*.lock
 
 # celery beat schedule file
 celerybeat-schedule

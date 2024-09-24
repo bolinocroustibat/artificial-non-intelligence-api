@@ -12,9 +12,9 @@ For the frontend, check the [dedicated frontend repo](https://github.com/bolinoc
 
 ## Main dependencies
 
-- Python 3.11
+- Python >=3.11
 - [FastAPI](https://fastapi.tiangolo.com/)
-- a PostgreSQL database
+- a PostgreSQL 15 database
 - Uvicorn web server
 
 
@@ -47,9 +47,9 @@ Create a virtual environment for the project, and install the Python dependencie
 pip install -r requirements.txt
 ```
 
-...or, if you use [PDM](https://pdm.fming.dev/):
+...or, if you use [uv](https://docs.astral.sh/uv/):
 ```sh
-pdm install
+uv install
 ```
 
 To run the API for local testing, launch the web server in your virtual environnement with:
@@ -58,7 +58,7 @@ uvicorn api.main:app --reload
 ```
 or
 ```sh
-pdm run uvicorn api.main:app --reload
+uv run uvicorn api.main:app --reload
 ```
 
 
