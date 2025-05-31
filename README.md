@@ -14,7 +14,7 @@ For the frontend, check the [dedicated frontend repo](https://github.com/bolinoc
 
 - Python >=3.10
 - [FastAPI](https://fastapi.tiangolo.com/)
-- a PostgreSQL 15 database (not tested with other PostegreSQL versions)
+- a PostgreSQL >=15 database
 - Uvicorn/Gunicorn web server
 
 
