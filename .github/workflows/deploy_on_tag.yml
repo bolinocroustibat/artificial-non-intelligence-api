@@ -6,13 +6,62 @@ on:
       - '*'
 
 jobs:
+  bump-version:
+    name: Bump version to ${{ github.ref_name }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Bump version in pyproject.toml and uv.lock to ${{ github.ref_name }}
+        run: |
+          sed -i 's/^ *version.*=.*"\([^"]*\)".*/version = "${{ github.ref_name }}"/' ./pyproject.toml
+          uv lock
+
+      - name: Commit and push updated pyproject.toml
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          branch: main
+          commit_message: "chore: bump version to ${{ github.ref_name }}"
+          commit_user_name: Adrien Carpentier
+          commit_user_email: me@adriencarpentier.com
+          commit_author: Adrien Carpentier <me@adriencarpentier.com>
 
   deploy-prod:
     name: Deploy ${{ github.ref_name }} to prod
+    needs: bump-version
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          ref: main  # Ensure we get the updated version after bump-version job
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/ana-api:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/ana-api:${{ github.ref_name }}
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ana-api:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ana-api:buildcache,mode=max
 
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
@@ -24,21 +73,48 @@ jobs:
       - name: Adding known hosts
         run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Copy repository to server with rsync
-        run: rsync -avz --exclude '.git' --chown=github:www-data --chmod=Dg=rwx,Fg=rwx ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/www/artificial-non-intelligence-api/ # We set directory (D) and files (F) permission for group www-data to rwx so that the same users can overwrite later
-
       - name: Execute server commands for deploy
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -e  # Exit on any error
+
+            # Ensure directory exists
+            mkdir -p /home/www/artificial-non-intelligence-api
             cd /home/www/artificial-non-intelligence-api
-            uv sync
-            sudo systemctl restart ani-api.service
+
+            # Clone or update the repository for configuration files
+            if [ -d .git ]; then
+              git fetch
+              git reset --hard origin/main
+            else
+              git clone https://github.com/bolinocroustibat/artificial-non-intelligence-api.git .
+            fi
+
+            # Login to Docker Hub
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+            # Set Docker image variables
+            export DOCKERHUB_USERNAME="${{ secrets.DOCKERHUB_USERNAME }}"
+            export TAG="${{ github.ref_name }}"
+
+            # Pull the new Docker images
+            docker compose pull
+            # Restart services
+            docker compose down
+            docker compose up -d
+            # Logout for security
+            docker logout
+
+            # Verify service is running
+            sleep 3  # Give the service time to start
+            docker compose ps --format json | grep -q "running" || exit 1
 
       - name: Create Sentry release
+        if: success()  # Only create Sentry release if deployment succeeded
         uses: getsentry/action-release@v3
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
