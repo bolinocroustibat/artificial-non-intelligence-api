@@ -1,0 +1,27 @@
+services:
+  api:
+    container_name: ana-api
+    image: ${DOCKERHUB_USERNAME}/ana-api:${TAG:-latest}
+    build: .
+    depends_on:
+      - db
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - SENTRY_DSN=${SENTRY_DSN}
+      - ORIGINS=${ORIGINS}
+
+  db:
+    container_name: ana-db
+    image: postgres:17-alpine
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+
+volumes:
+  postgres_data:
