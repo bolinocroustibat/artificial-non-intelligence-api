@@ -8,13 +8,9 @@ on:
 jobs:
 
   deploy-prod:
-
-    name: Deploy to prod from ${{ github.ref_name }}/${{ github.sha }}
-
+    name: Deploy ${{ github.ref_name }} to prod
     runs-on: ubuntu-latest
-
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -43,11 +39,11 @@ jobs:
             sudo systemctl restart ani-api.service
 
       - name: Create Sentry release
-        uses: getsentry/action-release@v1.7.0
+        uses: getsentry/action-release@v3
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: "adrien-carpentier"
           SENTRY_PROJECT: "artificial-non-intelligence-api"
         with:
           environment: production
-          version: ${{ github.ref_name }}
+          release: ${{ github.ref_name }}

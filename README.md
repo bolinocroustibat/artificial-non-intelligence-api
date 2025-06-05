@@ -1,6 +1,6 @@
-<img src=/images/Cover_photo_Artifical_NonIntelligence.png>
-
 # Artificial Non Intelligence - API
+
+<img src=/images/Cover_photo_Artifical_NonIntelligence.png>
 
 A deep learning generated web game to raise awareness about AI and trolls.
 This repository is about the API.
@@ -10,55 +10,59 @@ For the Data and Data Analysis, check the [dedicated Data repo](https://github.c
 For the frontend, check the [dedicated frontend repo](https://github.com/bolinocroustibat/artificial-non-intelligence-frontend).
 
 
-## Main dependencies
+## Requirements
 
-- Python >=3.10
-- [FastAPI](https://fastapi.tiangolo.com/)
-- a PostgreSQL >=15 database
-- Uvicorn/Gunicorn web server
+- [Docker](https://www.docker.com/) and Docker Compose (for running the application)
+- [uv](https://github.com/astral/uv) package manager (optional, only for development)
 
 
-## Run the API locally
+## Internal Dependencies
 
-Create or update a `settings.py` file on the root with the following settings corresponding on your environement, for example:
-```python
-import tomllib
+These dependencies are automatically handled by Docker:
+- [Python 3.13](https://www.python.org/) ([Alpine](https://hub.docker.com/_/python) based)
+- [FastAPI](https://fastapi.tiangolo.com/) with [Uvicorn](https://www.uvicorn.org/)/[Gunicorn](https://gunicorn.org/) workers
+- [PostgreSQL 17](https://www.postgresql.org/)
+- [uv](https://github.com/astral/uv) package manager
 
-with open("pyproject.toml", "rb") as f:
-    pyproject: dict = tomllib.load(f)
-APP_NAME: str = pyproject["project"]["name"]
-DESCRIPTION: str = pyproject["project"]["description"]
-VERSION: str = pyproject["project"]["version"]
-ENVIRONMENT="local"
-DATABASE_HOST="127.0.0.1"
-DATABASE_USER="root"
-DATABASE_PASSWORD="root"
-DATABASE_PORT="5432"
-DATABASE_DB="artificial-non-intelligence"
-ORIGINS=[
-    "http://localhost:8888",
-    "https://artificial-non-intelligence.netlify.app",
-]
-SENTRY_DSN = "https://abc123@abc123.ingest.sentry.io/abc123"
+
+## Running with Docker (recommended)
+
+1. Create a `.env` file in the root directory with the following variables:
+```bash
+ENVIRONMENT=local
+APP_PORT=8000
+DB_PORT=5432
+POSTGRES_DB=artificial-non-intelligence
+SENTRY_DSN=https://abc123@abc123.ingest.sentry.io/abc123
+ORIGINS=http://localhost:8888,https://artificial-non-intelligence.netlify.app
 ```
 
-Create a virtual environment for the project, and install the Python dependencies packages with:
+2. Build and start the containers:
 ```bash
+docker compose up --build
+```
+
+The API will be available at `http://localhost:8000` (or whichever port you specified in `APP_PORT`).
+
+
+## Run locally (without Docker)
+
+1. Create a `.env` file as described above
+
+2. Create a virtual environment and install dependencies:
+```bash
+# Using uv (recommended)
+uv sync
+
+# Or using pip
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-...or, if you use [uv](https://docs.astral.sh/uv/):
-```bash
-uv sync
-```
-
-To run the API for local testing, launch the web server in your virtual environnement with:
+3. Start the development server:
 ```bash
 uvicorn api.main:app --reload
-```
-or
-```bash
-uv run uvicorn api.main:app --reload
 ```
 
 
@@ -69,3 +73,11 @@ uv run uvicorn api.main:app --reload
 - `/sessions`: POST a new session id (see `/docs` for full documentation of this endpoint)
 - `/questions`: GET a random question (see `/docs` for full documentation of this endpoint)
 - `/answers`: POST - post the user's answer (see `/docs` for full documentation of this endpoint)
+
+
+## Exporting dependencies
+
+To export dependencies from uv.lock to requirements.txt:
+```bash
+uv export --no-dev --format requirements-txt > requirements.txt
+```

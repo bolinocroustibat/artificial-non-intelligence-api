@@ -116,15 +116,6 @@ celerybeat-schedule
 # SageMath parsed files
 *.sage.py
 
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -151,6 +142,15 @@ poetry.lock
 .pdm-python
 pdm.lock
 
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
 *.egg-info
 .coverage
 .ipynb_checkpoints
@@ -158,8 +158,4 @@ pdm.lock
 raw_data/
 **/__pycache__/
 __pycache__/
-.env
-.envrc
-
-# Local settings
-settings.py
+.ruff_cache/

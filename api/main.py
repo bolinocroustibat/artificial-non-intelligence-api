@@ -10,11 +10,7 @@ from pydantic import BaseModel
 
 from settings import (
     APP_NAME,
-    DATABASE_DB,
-    DATABASE_HOST,
-    DATABASE_PASSWORD,
-    DATABASE_PORT,
-    DATABASE_USER,
+    DATABASE_URL,
     DESCRIPTION,
     ENVIRONMENT,
     ORIGINS,
@@ -56,13 +52,7 @@ async def start_new_session(request: Request) -> dict:
     Start a new game, create a session
     """
     session_uid: str = uuid.uuid4()
-    connection = psycopg.connect(
-        host=DATABASE_HOST,
-        port=DATABASE_PORT,
-        dbname=DATABASE_DB,
-        user=DATABASE_USER,
-        password=DATABASE_PASSWORD,
-    )
+    connection = psycopg.connect(DATABASE_URL)
     with connection:
         client_host = request.client.host
         query: str = f"INSERT INTO sessions (ip, uuid) VALUES ('{client_host}', '{session_uid}');"  # noqa E501
@@ -78,13 +68,7 @@ async def get_new_question(aggressive: bool | None = None) -> dict:
     Endpoint which takes a random comment from the database (human-generated or AI-generated), and sends it back along with its ID in the database.
     """
 
-    connection = psycopg.connect(
-        host=DATABASE_HOST,
-        port=DATABASE_PORT,
-        dbname=DATABASE_DB,
-        user=DATABASE_USER,
-        password=DATABASE_PASSWORD,
-    )
+    connection = psycopg.connect(DATABASE_URL)
     with connection:
         real: int = random.choice([0, 1])
         if type(aggressive) is bool:
@@ -116,13 +100,7 @@ async def post_answer(body: AnswerPayload, request: Request) -> dict:
     """
     Endpoint which receives the answer from the user from the frontend, compares to the fake flag of the comment in the DB updates the score and the lives and end the game if lost
     """
-    connection = psycopg.connect(
-        host=DATABASE_HOST,
-        port=DATABASE_PORT,
-        dbname=DATABASE_DB,
-        user=DATABASE_USER,
-        password=DATABASE_PASSWORD,
-    )
+    connection = psycopg.connect(DATABASE_URL)
     with connection:
         try:
             # Get the session ID and current score
