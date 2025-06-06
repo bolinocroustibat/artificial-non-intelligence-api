@@ -106,12 +106,14 @@ jobs:
             # Restart services
             docker compose down
             docker compose up -d
-            # Logout for security
-            docker logout
 
             # Verify service is running
             sleep 3  # Give the service time to start
-            docker compose ps --format json | grep -q "running" || exit 1
+            if ! docker compose ps --format json | grep -q "running"; then
+              echo "Service failed to start properly"
+              docker compose logs
+              exit 1
+            fi
 
       - name: Create Sentry release
         if: success()  # Only create Sentry release if deployment succeeded
