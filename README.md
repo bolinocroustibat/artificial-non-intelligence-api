@@ -44,6 +44,18 @@ docker compose up --build
 
 The API will be available at `http://localhost:8000` (or whichever port you specified in `APP_PORT`).
 
+### Container Registry
+
+The project uses GitHub Container Registry (GHCR) to store Docker images. The images are automatically built and pushed on each tag release. You can find the container images at:
+
+```
+ghcr.io/bolinocroustibat/artificial-non-intelligence-api
+```
+
+Available tags:
+- `latest`: Latest stable release
+- `x.y.z`: Specific version releases
+
 
 ## Run locally (without Docker)
 
