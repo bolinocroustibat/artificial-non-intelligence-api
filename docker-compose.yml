@@ -1,6 +1,6 @@
 services:
   api:
-    container_name: ana-api
+    container_name: ani-api
     image: ghcr.io/${GITHUB_REPOSITORY}:${TAG:-latest}
     build: .
     depends_on:
@@ -12,9 +12,10 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - SENTRY_DSN=${SENTRY_DSN}
       - ORIGINS=${ORIGINS}
+    restart: unless-stopped
 
   db:
-    container_name: ana-db
+    container_name: ani-db
     image: postgres:17
     ports:
       - "${DB_PORT:-5432}:5432"
