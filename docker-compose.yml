@@ -1,7 +1,19 @@
 services:
+  db:
+    container_name: ani-db
+    image: postgres:17
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
   api:
     container_name: ani-api
-    image: ghcr.io/${GITHUB_REPOSITORY}:${TAG:-latest}
+    image: ghcr.io/bolinocroustibat/artificial-non-intelligence-api:${TAG:-latest}
     build: .
     depends_on:
       - db
@@ -13,18 +25,6 @@ services:
       - SENTRY_DSN=${SENTRY_DSN}
       - ORIGINS=${ORIGINS}
     restart: unless-stopped
-
-  db:
-    container_name: ani-db
-    image: postgres:17
-    ports:
-      - "${DB_PORT:-5432}:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
 
 volumes:
   postgres_data:
