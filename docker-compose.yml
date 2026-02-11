@@ -11,12 +11,19 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
   api:
     container_name: ani-api
     image: ghcr.io/bolinocroustibat/artificial-non-intelligence-api:${TAG:-latest}
     build: .
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
       - "${APP_PORT:-8000}:8000"
     environment:
@@ -25,6 +32,12 @@ services:
       - SENTRY_DSN=${SENTRY_DSN}
       - ORIGINS=${ORIGINS}
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/openapi.json')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 volumes:
   postgres_data:
