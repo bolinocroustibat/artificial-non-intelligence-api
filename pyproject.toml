@@ -31,5 +31,5 @@ lint = { extend-select = ["I"] }
 [tool.setuptools]
 py-modules = []
 
-[tool.uv]
-dev-dependencies = ["ruff>=0.6.5"]
+[dependency-groups]
+dev = ["ruff>=0.15.0"]
