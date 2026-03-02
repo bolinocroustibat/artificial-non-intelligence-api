@@ -31,7 +31,7 @@ These dependencies are automatically handled by Docker:
 ```bash
 ENVIRONMENT=local
 APP_PORT=8000
-DB_PORT=5432
+POSTGRES_PORT=5432
 POSTGRES_DB=artificial-non-intelligence
 SENTRY_DSN=https://abc123@abc123.ingest.sentry.io/abc123
 ORIGINS=http://localhost:8888,https://artificial-non-intelligence.netlify.app
