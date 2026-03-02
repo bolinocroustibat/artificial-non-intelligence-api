@@ -1,7 +1,7 @@
 services:
   db:
     container_name: ani-db
-    image: postgres:17
+    image: pgautoupgrade/pgautoupgrade:18-trixie
     restart: unless-stopped
     ports:
       - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
